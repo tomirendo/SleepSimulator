@@ -1,20 +1,12 @@
 from elements import Location, Action, Direction
 from random import randint, choice
+from values import create_value, copy_chain, evolve_chain
+from itertools import product
 
 MAX_MOVES = 20
 def rand_move():
     return (choice([Action.move, Action.eat]), Direction(randint(0,7)))
-
-class ConstValue:
-    def __init__(self, value):
-        self.value = value
-    def value(self)
-        return self.value
-
-
-class x(Value):
-    def 
-
+    
 def mutate_list_of_moves(ls):
     option =  randint(0, 5)
     random_index = randint(0, len(ls)-1)
@@ -28,26 +20,27 @@ def mutate_list_of_moves(ls):
         ls[random_index] = new_move
 
 
+all_actions =  list(product(Action.__members__.values(), Direction.__members__.values()))
+def pick_action(value):
+    return all_actions[value % len(all_actions)]
+
 class Creature: 
     def __init__(self):
         self.position = Location([0,0])
-        self.number_of_moves = randint(1,MAX_MOVES)
-        self.list_of_moves = [rand_move() for _ in range(self.number_of_moves)]
-        self.move_index = 0
         self.rank = 0 
         self.color = tuple(randint(0,255) for _ in range(3))
+        self.chain = create_value(self)
     
     def copy(self):
         c = Creature()
         c.color = self.color
-        c.list_of_moves = list(self.list_of_moves)
-        mutate_list_of_moves(c.list_of_moves)
-        c.number_of_moves = len(c.list_of_moves)
+        c.chain = copy_chain(self.chain)
+        evolve_chain(c.chain)
         return c
 
     def move(self):
-        self.move_index = (self.move_index + 1) % self.number_of_moves
-        return self.list_of_moves[self.move_index]
+        return pick_action(self.chain.value())
+
 
     def init(self):
         self.rank = 0
@@ -67,4 +60,4 @@ class Creature:
     def __eq__(self, second):
         return self.rank == second.rank
     def __repr__(self):
-        return "C {} Rank : {}".format(repr(self.list_of_moves), self.rank)
+        return "C {} Rank : {}".format(repr(self.chain), self.rank)
