@@ -4,17 +4,7 @@ from random import randint, choice
 MAX_MOVES = 20
 def rand_move():
     return (choice([Action.move, Action.eat]), Direction(randint(0,7)))
-
-class ConstValue:
-    def __init__(self, value):
-        self.value = value
-    def value(self)
-        return self.value
-
-
-class x(Value):
-    def 
-
+    
 def mutate_list_of_moves(ls):
     option =  randint(0, 5)
     random_index = randint(0, len(ls)-1)

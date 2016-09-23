@@ -87,10 +87,11 @@ def generation(visual = True):
         game.init_board()
         single_run(visual = visual)
 
+from collections import Counter
 while not done:
     # --- Event Processing
     generation(visual = visual)
-    print(len(original_creatures), len(set(i.color for i in original_creatures)))
+    print(Counter(hash(i.color) for i in original_creatures).most_common(10), sum(len(i.list_of_moves) for i in original_creatures)/len(original_creatures))
     top_creatures = sorted(original_creatures)[number_of_creatures//2:]
     original_creatures = list(top_creatures)
     for creature in top_creatures:
