@@ -1,5 +1,6 @@
 from elements import Location, Action, Direction
 from random import randint, choice
+from values import create_value
 
 MAX_MOVES = 20
 def rand_move():
@@ -17,17 +18,18 @@ def mutate_list_of_moves(ls):
         new_move = rand_move()
         ls[random_index] = new_move
 
+def pick_action(value):
+    list_of_actions = 
 
 class Creature: 
     def __init__(self):
         self.position = Location([0,0])
-        self.number_of_moves = randint(1,MAX_MOVES)
-        self.list_of_moves = [rand_move() for _ in range(self.number_of_moves)]
-        self.move_index = 0
         self.rank = 0 
         self.color = tuple(randint(0,255) for _ in range(3))
+        self.chain = create_value(self)
     
     def copy(self):
+        return Creature()
         c = Creature()
         c.color = self.color
         c.list_of_moves = list(self.list_of_moves)
@@ -36,8 +38,7 @@ class Creature:
         return c
 
     def move(self):
-        self.move_index = (self.move_index + 1) % self.number_of_moves
-        return self.list_of_moves[self.move_index]
+
 
     def init(self):
         self.rank = 0
