@@ -46,8 +46,8 @@ rect_change_x = 2
 rect_change_y = 2
  
 GENERATION_LEGNTH = 1
-GAME_LENGTH = 80
-SPEED = 500
+GAME_LENGTH = 120
+SPEED = 50
 
 screen_size = 20
 original_creatures = [Creature() for _ in range((screen_size//2)**2)]
@@ -91,12 +91,12 @@ from collections import Counter
 while not done:
     # --- Event Processing
     generation(visual = visual)
-    print(Counter(hash(i.color) for i in original_creatures).most_common(10), sum(len(i.list_of_moves) for i in original_creatures)/len(original_creatures))
     top_creatures = sorted(original_creatures)[number_of_creatures//2:]
+    print(len(set(c.color for c in top_creatures)), repr(top_creatures[-1]))
     original_creatures = list(top_creatures)
     for creature in top_creatures:
         original_creatures.append(creature.copy())
-    number_of_creatures = len(original_creatures)
+        creature.init()
 
 
     
