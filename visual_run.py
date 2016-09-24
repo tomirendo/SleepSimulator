@@ -9,8 +9,6 @@ from random import shuffle, choice, seed
 import argparse
 
 
-seed(11)
-seed(12 )
 parser = argparse.ArgumentParser()
 parser.add_argument('visual', metavar='v', type=str, 
                     help='Should display visual')
@@ -49,13 +47,11 @@ rect_change_x = 2
 rect_change_y = 2
  
 GENERATION_LEGNTH = 1
-GAME_LENGTH = 250
+GAME_LENGTH = 300
 SPEED = 50 
 
 screen_size = 32
-original_creatures = [Creature() for _ in range((screen_size//2)**2)]
-number_of_creatures = len(original_creatures)
-game = Board(screen_size, original_creatures)
+game = Board(screen_size)
 block_size = (size[0] // screen_size, size[1]//screen_size)
 
 def draw_at_location(position, color):
@@ -85,8 +81,6 @@ def single_run(visual = True):
  
 def generation(visual = True):
     for _ in range(GENERATION_LEGNTH):
-        shuffle(original_creatures)
-        game.creatures = list(original_creatures)
         game.init_board()
         single_run(visual = visual)
 
@@ -94,14 +88,7 @@ from collections import Counter
 while not done:
     # --- Event Processing
     generation(visual = visual)
-    ordered_creatures = sorted(original_creatures)
-    top_creatures = ordered_creatures[number_of_creatures//2:]
-    print(len(set(c.color for c in top_creatures)), repr(top_creatures[-1]))
-    original_creatures = list(top_creatures)
-    for creature in top_creatures:
-        original_creatures.append(creature.copy())
-        creature.init()
-    print(len(original_creatures))
+    game.new_generation()
 
 
 

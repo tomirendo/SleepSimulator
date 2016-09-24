@@ -25,11 +25,12 @@ def pick_action(value):
     return all_actions[value % len(all_actions)]
 
 class Creature: 
-    def __init__(self):
+    def __init__(self, game = None):
         self.position = Location([0,0])
         self.rank = 0 
         self.color = tuple(randint(0,255) for _ in range(3))
         self.chain = create_value(self)
+        self.game = game
     
     def copy(self):
         c = Creature()
@@ -49,7 +50,7 @@ class Creature:
     def eat(self):
         self.rank += 1
     def eaten(self):
-        self.rank = -1    
+        self.rank -= 1
     def update(self, value):
         pass
     def __gt__(self, second):

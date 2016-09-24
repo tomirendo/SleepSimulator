@@ -1,5 +1,5 @@
 from random import randint
-from elements import Action, Direction
+from elements import Action, Direction, action_destination
 
 def rand_in_range():
     return randint(0, len(Action.__members__)*len(Direction.__members__))
@@ -29,41 +29,66 @@ class Value:
         a_copy = type(self)(None)
         a_copy.__dict__ = dict(self.__dict__)
         return a_copy
-
-
 class TwoInputValue(Value):
     def __init__(self, *args):
         Value.__init__(self, *args)
         self.links = 2
     def __repr__(self):
         a,b = self.inputs
-        return "({},{}) -> {}".format(repr(a), repr(b), self.__class__.__name__)
+        return "({}{}{})".format(repr(a), self.sign, repr(b))
+class OneInputValue(Value):
+    def __init__(self, *args):
+        Value.__init__(self, *args)
+        self.links = 1
+    def __repr__(self):
+        a, = self.inputs
+        return "{}({})".format(self.__class__.__name__, repr(a))
+  
+
 
 class Add(TwoInputValue):
+    sign = '+'
     def value(self):
         a,b = self.inputs
         return a.value() + b.value()
 class Subtract(TwoInputValue):
-       def value(self):
+    sign = '-'
+    def value(self):
         a,b = self.inputs
         return a.value() - b.value()
 class Multiply(TwoInputValue):
+    sign = '*'
     def value(self):
         a,b = self.inputs
         return a.value() * b.value()
-
 class Mod(TwoInputValue):
+    sign = '%'
     def value(self):
         a,b = self.inputs
         b_value = b.value()
         if b_value != 0 :
             return a.value() % b_value
         return 0
+class Compare(TwoInputValue):
+    sign = '>'
+    def value(self):
+        a,b = self.inputs
+        return int(a.value() > b.value())
+class Div(TwoInputValue):
+    sign = '/'
+    def value(self):
+        a,b = self.inputs
+        b_value = b.value()
+        if b_value == 0 :
+            return 0
+        return a.value()//b_value
 
 class ConstValue(Value):
     def __init__(self, *args):
         Value.__init__(self, *args)
         self.const_value = rand_in_range() 
+    def __repr__(self):
+        return str(self.const_value)
     def value(self):
         return self.const_value
 class CounterValue(Value):
@@ -86,13 +111,31 @@ class YValue(Value):
     def value(self):
         return self.creature.position.y
 
+all_directions = list(Direction.__members__.values())
+number_of_directions = len(all_directions)
+def map_integer_to_direction(number):
+    return all_directions[number % number_of_directions]
+
+class GreenValue(OneInputValue):
+    def value(self):
+        a, = self.inputs
+        direction = map_integer_to_direction(a.value())
+        dest = action_destination(direction, self.creature.position)
+        if self.creature.game.is_in_board(dest):
+            object_at_position = self.creature.game.get_position(dest)
+            if object_at_position:
+                return object_at_position.color[1]
+        return 0
 
 
-values = [ConstValue, CounterValue, XValue, YValue, RandomValue, Add, Subtract, Multiply, Mod]
+
+
+values = [GreenValue, ConstValue, ConstValue, CounterValue, XValue, YValue, RandomValue, Add, Subtract, Multiply, Mod, Div]
 
 #Temporary
 no_input_values = [RandomValue, ConstValue, CounterValue, XValue, YValue]
-two_input_values = [Add, Subtract, Multiply, Mod]
+two_input_values = [Add, Subtract, Multiply, Mod, Compare, Div]
+one_input_values = [GreenValue]
 
 from random import choice
 def random_value(creature):
@@ -122,6 +165,10 @@ def evolve_chain(chain):
             new_chain = choice(two_input_values)(chain.creature)
             for input in chain.inputs:
                 new_chain.add_input(input)
+            return new_chain
+        elif chain_type in one_input_values:
+            new_chain = choice(one_input_values)(chain.creature)
+            new_chain.add_input(chain.inputs[0])
             return new_chain
     elif randint(0,5) == 0:
         return create_value(chain.creature)
