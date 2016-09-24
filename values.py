@@ -116,37 +116,48 @@ number_of_directions = len(all_directions)
 def map_integer_to_direction(number):
     return all_directions[number % number_of_directions]
 
-class GreenValue(OneInputValue):
+class GreenValue(Value):
+    def __init__(self, *args):
+        Value.__init__(self, *args)
+        self.direction = map_integer_to_direction(randint(0, number_of_directions-1))
     def value(self):
-        a, = self.inputs
-        direction = map_integer_to_direction(a.value())
-        dest = action_destination(direction, self.creature.position)
+        dest = action_destination(self.direction, self.creature.position)
         if self.creature.game.is_in_board(dest):
             object_at_position = self.creature.game.get_position(dest)
             if object_at_position:
-                return object_at_position.color[1]
+                return object_at_position.color[1] // 25
         return 0
+    def __repr__(self):
+        return "GreenValue({})".format(self.direction)
 
 
 
-
-values = [GreenValue, ConstValue, ConstValue, CounterValue, XValue, YValue, RandomValue, Add, Subtract, Multiply, Mod, Div]
+values = [GreenValue, ConstValue, CounterValue, Add, Subtract, Multiply, Mod, Compare, Div]
 
 #Temporary
-no_input_values = [RandomValue, ConstValue, CounterValue, XValue, YValue]
+no_input_values = [GreenValue, ConstValue, CounterValue]
 two_input_values = [Add, Subtract, Multiply, Mod, Compare, Div]
-one_input_values = [GreenValue]
+one_input_values = []
 
 from random import choice
 def random_value(creature):
-    return choice(values)(creature)
+    rnd = randint(1,100)
+    if rnd <= 60:
+        return choice(one_input_values + no_input_values)(creature)
+    else :
+        return choice(two_input_values)(creature)
 
 def create_value(creature):
-    last_value = random_value(creature)
+    last_value = choice(two_input_values)(creature)
+    count = 1
     emtpy_link = last_value.get_empty_link()
     while emtpy_link is not None:
-        emtpy_link.add_input(random_value(creature))
+        if count < 15:
+            emtpy_link.add_input(random_value(creature))
+        else :
+            emtpy_link.add_input(choice(no_input_values)(creature))
         emtpy_link = last_value.get_empty_link()
+        count += 1
     return last_value
 
 def copy_chain(chain):
@@ -172,7 +183,7 @@ def evolve_chain(chain):
             return new_chain
     elif randint(0,5) == 0:
         return create_value(chain.creature)
-    elif randint(0,5) == 0 and chain.inputs :
+    elif randint(0,3) == 0 and chain.inputs :
         random_index = randint(0, len(chain.inputs) - 1)
         chain.inputs[random_index] = evolve_chain(chain.inputs[random_index])
         return chain

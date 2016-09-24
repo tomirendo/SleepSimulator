@@ -1,6 +1,6 @@
 from elements import Location, Action, Direction
 from random import randint, choice
-from values import create_value, copy_chain, evolve_chain
+from values import create_value, copy_chain, evolve_chain, ConstValue
 from itertools import product
 
 MAX_MOVES = 20
@@ -28,7 +28,7 @@ class Creature:
     def __init__(self, game = None):
         self.position = Location([0,0])
         self.rank = 0 
-        self.color = tuple(randint(0,255) for _ in range(3))
+        self.color = tuple(randint(10,255) for _ in range(3))
         self.chain = create_value(self)
         self.game = game
     
@@ -36,7 +36,7 @@ class Creature:
         c = Creature()
         c.color = self.color
         c.chain = copy_chain(self.chain)
-        evolve_chain(c.chain)
+        c.chain = evolve_chain(c.chain)
         return c
 
     def move(self):
@@ -51,6 +51,8 @@ class Creature:
         self.rank += 1
     def eaten(self):
         self.rank -= 1
+    def hungry(self):
+        pass
     def update(self, value):
         pass
     def __gt__(self, second):

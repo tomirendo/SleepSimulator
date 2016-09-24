@@ -3,6 +3,10 @@ from creature import Creature
 from elements import Action, Direction, Location
 from elements import action_destination
 from random import shuffle
+from yotam_creature import yotam_creature
+from collections import Counter
+
+MOVES_UNTIL_HUNGRY = 30
 
 class Board:
     def __init__(self, size):
@@ -10,10 +14,10 @@ class Board:
         self.creatures = [Creature(self) for _ in range((size//2)**2)]
         self.all_creatures = list(self.creatures)
         self.init_board()
+        self.moves_count = 0
         
     def init_board(self): 
         size = self.size
-
         shuffle(self.all_creatures)
         self.creatures = list(self.all_creatures)
 
@@ -27,6 +31,7 @@ class Board:
         ordered_creatures = sorted(self.all_creatures)
         top_creatures = ordered_creatures[len(self.all_creatures)//2:]
         self.all_creatures = list(top_creatures)
+        print(len(set(i.color for i in top_creatures)), Counter(repr(c.chain) for c in top_creatures).most_common(10))
         for creature in top_creatures:
             self.all_creatures.append(creature.copy())
             creature.init()
@@ -61,7 +66,8 @@ class Board:
                 return creature
    
     def move(self):
-        all_moves = []
+        self.moves_count += 1
+        all_moves =  []
         size = self.size
         for creature in self.creatures:
             action, direction = creature.move()
@@ -77,11 +83,15 @@ class Board:
                     eated_creature = self.creature_on_location(destination)
                     eated_creature.eaten()
                     self.creatures.remove(eated_creature)
-                    self.set_position(location,EMPTY_CELL()) 
+                    self.set_position(destination, EMPTY_CELL()) 
                     #self.set_position(destination, creature)
                     #creature.position = destination
                     creature.eat()
-        return all_moves 
+            if self.moves_count%MOVES_UNTIL_HUNGRY == 0 :
+                creature.hungry()
+
+        return all_moves
+
                 
             
     def _repr_html_(self):
