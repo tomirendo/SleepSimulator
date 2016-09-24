@@ -12,7 +12,7 @@ class Direction(Enum):
 class Action(Enum):
     move = 0
     eat = 1
-    look = 2    
+    #look = 2    
 
 class Location:
     def __init__(self, loc):

@@ -52,6 +52,14 @@ class Multiply(TwoInputValue):
         a,b = self.inputs
         return a.value() * b.value()
 
+class Mod(TwoInputValue):
+    def value(self):
+        a,b = self.inputs
+        b_value = b.value()
+        if b_value != 0 :
+            return a.value() % b_value
+        return 0
+
 class ConstValue(Value):
     def __init__(self, *args):
         Value.__init__(self, *args)
@@ -80,11 +88,11 @@ class YValue(Value):
 
 
 
-values = [ConstValue, CounterValue, XValue, YValue, Add, Subtract, Multiply]
+values = [ConstValue, CounterValue, XValue, YValue, RandomValue, Add, Subtract, Multiply, Mod]
 
 #Temporary
 no_input_values = [RandomValue, ConstValue, CounterValue, XValue, YValue]
-two_input_values = [Add, Subtract, Multiply]
+two_input_values = [Add, Subtract, Multiply, Mod]
 
 from random import choice
 def random_value(creature):
@@ -106,7 +114,7 @@ def copy_chain(chain):
     return top_chain
 
 def evolve_chain(chain):
-    if randint(0,29) == 0:
+    if randint(0,5) == 0:
         chain_type = type(chain)
         if chain_type in no_input_values:
             return choice(no_input_values)(chain.creature)
@@ -115,9 +123,9 @@ def evolve_chain(chain):
             for input in chain.inputs:
                 new_chain.add_input(input)
             return new_chain
-    elif randint(0,29) == 0:
+    elif randint(0,5) == 0:
         return create_value(chain.creature)
-    elif chain.inputs :
+    elif randint(0,5) == 0 and chain.inputs :
         random_index = randint(0, len(chain.inputs) - 1)
         chain.inputs[random_index] = evolve_chain(chain.inputs[random_index])
         return chain

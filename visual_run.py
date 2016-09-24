@@ -4,10 +4,13 @@ import pygame
 from simboard import Board
 from creature import Creature
 from elements import Location, Action
-from random import shuffle
+from random import shuffle, choice, seed
 
 import argparse
 
+
+seed(11)
+seed(12 )
 parser = argparse.ArgumentParser()
 parser.add_argument('visual', metavar='v', type=str, 
                     help='Should display visual')
@@ -46,10 +49,10 @@ rect_change_x = 2
 rect_change_y = 2
  
 GENERATION_LEGNTH = 1
-GAME_LENGTH = 120
-SPEED = 50
+GAME_LENGTH = 250
+SPEED = 50 
 
-screen_size = 20
+screen_size = 32
 original_creatures = [Creature() for _ in range((screen_size//2)**2)]
 number_of_creatures = len(original_creatures)
 game = Board(screen_size, original_creatures)
@@ -91,12 +94,17 @@ from collections import Counter
 while not done:
     # --- Event Processing
     generation(visual = visual)
-    top_creatures = sorted(original_creatures)[number_of_creatures//2:]
+    ordered_creatures = sorted(original_creatures)
+    top_creatures = ordered_creatures[number_of_creatures//2:]
     print(len(set(c.color for c in top_creatures)), repr(top_creatures[-1]))
     original_creatures = list(top_creatures)
     for creature in top_creatures:
         original_creatures.append(creature.copy())
         creature.init()
+    print(len(original_creatures))
+
+
+
 
 
     

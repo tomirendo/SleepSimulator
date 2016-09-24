@@ -32,8 +32,6 @@ class Board:
         if destination.in_board(self.size):
             if action == Action.move:
                 return self.creature_on_location(destination) is None
-            if action == Action.look:
-                return True
             if action == Action.eat:
                 return not (self.creature_on_location(destination) is None)
             
@@ -58,8 +56,6 @@ class Board:
                     self.set_position(location, EMPTY_CELL())
                     self.set_position(destination, creature)
                     creature.position = destination
-                elif action == Action.look:
-                    pass
                 elif action == Action.eat:
                     eated_creature = self.creature_on_location(destination)
                     eated_creature.eaten()

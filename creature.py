@@ -49,8 +49,7 @@ class Creature:
     def eat(self):
         self.rank += 1
     def eaten(self):
-        self.rank -= 1
-    
+        self.rank = -1    
     def update(self, value):
         pass
     def __gt__(self, second):
