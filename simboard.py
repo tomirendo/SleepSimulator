@@ -3,7 +3,6 @@ from creature import Creature
 from elements import Action, Direction, Location
 from elements import action_destination
 from random import shuffle
-from yotam_creature import yotam_creature
 from collections import Counter
 
 MOVES_UNTIL_HUNGRY = 30
