@@ -1,5 +1,5 @@
-from random import random
-from creature import Creature, Location, Move
+from random import random, shuffle
+from creature import Creature, Location, Move, evolve_creature
 from food import Food
 
 def rand_location(size):
@@ -7,7 +7,9 @@ def rand_location(size):
 
 class Board:
     def __init__(self, size, number_of_creatures, number_of_foods=30):
-        self.creatures = [Creature() for _ in range(number_of_creatures)]
+        self.number_of_creatures = number_of_creatures
+        self.number_of_foods = number_of_foods
+        self.creatures = [Creature(game = self) for _ in range(number_of_creatures)]
         self.foods = [Food() for _ in range(number_of_foods)]
         self.size = size
         self.locate_creatures()
@@ -50,6 +52,16 @@ class Board:
                     self.foods.remove(f)
                 c.foods_eaten.extend(foods_eaten_by_creature)
 
+    def next_generation(self):
+        self.creatures.sort(key = lambda c:c.amount_eaten(), reverse = True)
+        top_creatures = self.creatures[:len(self.creatures)//2]
+        self.creatures = list(top_creatures)
+        for c in top_creatures:
+            self.creatures.append(evolve_creature(c))
+            c.restart()
+        self.foods = [Food() for _ in range(self.number_of_foods)]
+        self.locate_creatures()
+        self.locate_foods()
 
 
 

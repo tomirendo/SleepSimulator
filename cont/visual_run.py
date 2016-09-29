@@ -1,3 +1,5 @@
+#!/usr/local/bin/python3.5
+
 import pygame 
 from board import Board
 
@@ -18,14 +20,19 @@ def draw_display(board):
         draw_creature(c)
     for f in board.foods:
         draw_creature(f)
-        
-game = Board (500, 50)
+
+game = Board (500, 50, 50)
+
+def run_generation():
+    for _ in range(400):
+        clock.tick(40)
+        game.move()
+        draw_display(game)
+        pygame.display.flip()
 
 while True:
-    clock.tick(20)
-    game.move()
-    draw_display(game)
-    pygame.display.flip()
+    run_generation()
+    game.next_generation()
 
 
 
