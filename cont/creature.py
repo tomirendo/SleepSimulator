@@ -1,6 +1,6 @@
 from math import pi, sqrt, sin, cos
 from random import random, randint
-CREATURE_RADIUS = 25
+CREATURE_RADIUS = 15
 
 class Location:
     def __init__(self, *args):
@@ -40,6 +40,7 @@ class Creature:
             self.color = color
         self.location = Location([0,0])
         self.radius = CREATURE_RADIUS
+        self.foods_eaten = []
 
     def move(self):
         self.location = self.location + self.next_move.step()

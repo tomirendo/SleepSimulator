@@ -16,7 +16,11 @@ def draw_display(board):
     screen.fill(BACKGROUND)
     for c in board.creatures:
         draw_creature(c)
-game = Board (500, 10)
+    for f in board.foods:
+        draw_creature(f)
+        
+game = Board (500, 50)
+
 while True:
     clock.tick(20)
     game.move()
